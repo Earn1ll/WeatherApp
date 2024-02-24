@@ -9,4 +9,6 @@ data class WeatherModel(
     val minTemperature: String,
     val imageUrl: String,
     val hours: String,
+    val region: String,
+    val country: String,
 )

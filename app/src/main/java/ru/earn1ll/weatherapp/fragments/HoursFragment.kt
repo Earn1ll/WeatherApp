@@ -46,6 +46,8 @@ class HoursFragment : Fragment() {
                 "",
                 "",
                 "",
+                "",
+                "",
                 ""
             ),
             WeatherModel(
@@ -56,6 +58,8 @@ class HoursFragment : Fragment() {
                 "",
                 "",
                 "",
+                "",
+                "",
                 ""
             ),
             WeatherModel(
@@ -63,6 +67,8 @@ class HoursFragment : Fragment() {
                 "14:00",
                 "Sunny",
                 "28°C",
+                "",
+                "",
                 "",
                 "",
                 "",
