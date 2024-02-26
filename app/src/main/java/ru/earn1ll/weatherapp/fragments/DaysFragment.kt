@@ -11,9 +11,10 @@ import ru.earn1ll.weatherapp.MainViewModel
 import ru.earn1ll.weatherapp.R
 import ru.earn1ll.weatherapp.databinding.FragmentDaysBinding
 import ru.earn1ll.weatherapp.fragments.adapters.WeatherAdapter
+import ru.earn1ll.weatherapp.fragments.adapters.WeatherModel
 
 
-class DaysFragment : Fragment() {
+class DaysFragment : Fragment(),WeatherAdapter.Listener {
     private lateinit var adapter: WeatherAdapter
     private lateinit var binding: FragmentDaysBinding
     private val model: MainViewModel by activityViewModels()
@@ -27,7 +28,7 @@ class DaysFragment : Fragment() {
     }
 
     private fun init() = with(binding){
-        adapter = WeatherAdapter()
+        adapter = WeatherAdapter(this@DaysFragment)
         rcViewDays.layoutManager = LinearLayoutManager(activity)
         rcViewDays.adapter= adapter
     }
@@ -42,5 +43,9 @@ class DaysFragment : Fragment() {
     companion object {
 
         fun newInstance() = DaysFragment()
+    }
+
+    override fun onClick(item: WeatherModel) {
+        model.liveDataCurrent.value = item
     }
 }

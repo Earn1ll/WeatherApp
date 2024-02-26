@@ -75,9 +75,9 @@ class MainFragment : Fragment() {
             tvCity.text = it.city
             tvRegion.text = it.region
             tvCountry.text = it.country
-            tvCurrentTemp.text = temperature
+            tvCurrentTemp.text = it.currentTemperature.ifEmpty { maxMinTemperature }
             tvCondition.text = it.condition
-            tvMaxMin.text = maxMinTemperature
+            tvMaxMin.text = if(it.currentTemperature.isEmpty())"" else maxMinTemperature
             Picasso.get().load("https:" +it.imageUrl).into(imWeather)
         }
     }
@@ -137,8 +137,8 @@ class MainFragment : Fragment() {
                 day.getString("date"),
                 day.getJSONObject("day").getJSONObject("condition").getString("text"),
                 "",
-                day.getJSONObject("day").getString("maxtemp_c"),
-                day.getJSONObject("day").getString("mintemp_c"),
+                day.getJSONObject("day").getString("maxtemp_c").toFloat().toInt().toString(),
+                day.getJSONObject("day").getString("mintemp_c").toFloat().toInt().toString(),
                 day.getJSONObject("day").getJSONObject("condition").getString("icon"),
                 day.getJSONArray("hour").toString(),
                 region,
