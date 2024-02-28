@@ -29,7 +29,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
-import ru.earn1ll.weatherapp.Dialogmanager
+import ru.earn1ll.weatherapp.DialogManager
 import ru.earn1ll.weatherapp.MainViewModel
 import ru.earn1ll.weatherapp.databinding.FragmentMainBinding
 import ru.earn1ll.weatherapp.fragments.adapters.VpAdapter
@@ -87,8 +87,8 @@ class MainFragment : Fragment() {
             getLocation()
             checkLocation()
         }
-        ibSearch.setOnClickListener{
-            Dialogmanager.searchByNameDialog(requireContext(),object :Dialogmanager.Listener{
+        ibSearch.setOnClickListener {
+            DialogManager.searchByNameDialog(requireContext(), object : DialogManager.Listener{
                 override fun onClick(name: String?) {
                     name?.let { it1 -> requestWeatherData(it1) }
                 }
@@ -100,7 +100,7 @@ class MainFragment : Fragment() {
         if (isLocationEnabled()){
             getLocation()
         } else {
-            Dialogmanager.locationSettingsDialog(requireContext(),object : Dialogmanager.Listener{
+            DialogManager.locationSettingsDialog(requireContext(),object : DialogManager.Listener{
                 override fun onClick(name:String?) {
                     startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 }

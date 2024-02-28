@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.widget.EditText
 
-object Dialogmanager {
+object DialogManager {
     fun locationSettingsDialog(context: Context,listener:Listener){
         val builder =AlertDialog.Builder(context)
         val diaog = builder.create()
@@ -20,20 +20,20 @@ object Dialogmanager {
         diaog.show()
     }
 
-    fun searchByNameDialog(context: Context,listener:Listener){
-        val builder =AlertDialog.Builder(context)
-        val diaog = builder.create()
+    fun searchByNameDialog(context: Context, listener: Listener){
+        val builder = AlertDialog.Builder(context)
         val edName = EditText(context)
         builder.setView(edName)
-        diaog.setTitle("City name:")
-        diaog.setButton(AlertDialog.BUTTON_POSITIVE,"Ok"){_,_ ->
+        val dialog = builder.create()
+        dialog.setTitle("City name:")
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK"){ _,_ ->
             listener.onClick(edName.text.toString())
-            diaog.dismiss()
+            dialog.dismiss()
         }
-        diaog.setButton(AlertDialog.BUTTON_NEGATIVE,"Cancel"){_,_ ->
-            diaog.dismiss()
+        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel"){ _,_ ->
+            dialog.dismiss()
         }
-        diaog.show()
+        dialog.show()
     }
     interface Listener{
         fun onClick(name:String?)
