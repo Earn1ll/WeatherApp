@@ -1,6 +1,7 @@
 package ru.earn1ll.weatherapp.fragments
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,11 +11,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
@@ -31,6 +38,7 @@ class MainFragment : Fragment() {
     private lateinit var pLauncher: ActivityResultLauncher<String>
     private lateinit var binding: FragmentMainBinding
     private val model: MainViewModel by activityViewModels()
+    private lateinit var  fLocationClient: FusedLocationProviderClient
 
     private val flist = listOf(
         HoursFragment.newInstance(),
@@ -55,15 +63,38 @@ class MainFragment : Fragment() {
         checkPermission()
         init()
         updateCurrentCard()
-        requestWeatherData("Brest")
+        getLocation()
     }
 
     private fun init() = with(binding) {
+        fLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         val adapter = VpAdapter(activity as FragmentActivity, flist)
         viewPager.adapter = adapter
         TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
             tab.text = tlist[pos]
         }.attach()
+        ibSync.setOnClickListener{
+            tabLayout.selectTab(tabLayout.getTabAt(0))
+            getLocation()
+        }
+    }
+
+    private fun getLocation(){
+        val ct = CancellationTokenSource()
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        fLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY,ct.token)
+            .addOnCompleteListener{
+            requestWeatherData(("${it.result.latitude},${it.result.longitude}"))
+        }
     }
 
     private fun updateCurrentCard() = with(binding){
