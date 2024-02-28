@@ -1,8 +1,12 @@
 package ru.earn1ll.weatherapp.fragments
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -25,6 +29,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
+import ru.earn1ll.weatherapp.Dialogmanager
 import ru.earn1ll.weatherapp.MainViewModel
 import ru.earn1ll.weatherapp.databinding.FragmentMainBinding
 import ru.earn1ll.weatherapp.fragments.adapters.VpAdapter
@@ -63,7 +68,11 @@ class MainFragment : Fragment() {
         checkPermission()
         init()
         updateCurrentCard()
-        getLocation()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLocation()
     }
 
     private fun init() = with(binding) {
@@ -76,10 +85,33 @@ class MainFragment : Fragment() {
         ibSync.setOnClickListener{
             tabLayout.selectTab(tabLayout.getTabAt(0))
             getLocation()
+            checkLocation()
         }
     }
 
+    private fun checkLocation(){
+        if (isLocationEnabled()){
+            getLocation()
+        } else {
+            Dialogmanager.locationSettingsDialog(requireContext(),object : Dialogmanager.Listener{
+                override fun onClick() {
+                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+
+            })
+        }
+    }
+
+    private fun isLocationEnabled():Boolean{
+        val lm = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
     private fun getLocation(){
+        if (!isLocationEnabled()){
+            Toast.makeText(requireContext(), "Location disabled!", Toast.LENGTH_SHORT).show()
+            return
+        }
         val ct = CancellationTokenSource()
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
